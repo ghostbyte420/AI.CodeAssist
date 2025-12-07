@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(codeAssistant));
             codeAssistant_button_projectPathSearch = new Button();
             codeAssistant_button_exportCodeBase = new Button();
             codeAssistant_textBox_projectPathDirectory = new TextBox();
@@ -105,6 +106,7 @@
             Controls.Add(codeAssistant_textBox_projectPathDirectory);
             Controls.Add(codeAssistant_button_exportCodeBase);
             Controls.Add(codeAssistant_button_projectPathSearch);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "codeAssistant";
             Text = "CodeAssistant";
             ResumeLayout(false);

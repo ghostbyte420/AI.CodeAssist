@@ -326,6 +326,7 @@ namespace AI.CodeAssist
             backBrush.Dispose();
         }
 
+        /// Code Assistant Button Click Event
         private void main_menuStrip_button_codeAssistant_Click(object sender, EventArgs e)
         {
             if (_codeAssistantForm == null || _codeAssistantForm.IsDisposed)
@@ -338,6 +339,20 @@ namespace AI.CodeAssist
             {
                 _codeAssistantForm.BringToFront();
             }
+        }
+
+        /// Adjust Code Assistant Button Position on Resize
+        private void aiCodeAssistMain_Resize(object sender, EventArgs e)
+        {
+            this.Resize += (sender, e) =>
+            {
+                main_menuStrip_button_codeAssistant.Margin = new Padding(
+                    this.ClientSize.Width - main_menuStrip_button_codeAssistant.Width - 100, // 100px from the right
+                    0,
+                    0,
+                    0
+                );
+            };
         }
     }
 }

@@ -195,7 +195,7 @@
             // 
             // main_menuStrip_button_codeAssistant
             // 
-            main_menuStrip_button_codeAssistant.Margin = new Padding(840, 0, 0, 0);
+            main_menuStrip_button_codeAssistant.Margin = new Padding(847, 0, 0, 0);
             main_menuStrip_button_codeAssistant.Name = "main_menuStrip_button_codeAssistant";
             main_menuStrip_button_codeAssistant.Size = new Size(112, 23);
             main_menuStrip_button_codeAssistant.Text = "Code Assistant";
@@ -215,6 +215,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AI.CodeAssist";
             Load += Main_Load;
+            Resize += aiCodeAssistMain_Resize;
             ((System.ComponentModel.ISupportInitialize)main_tabControl_tabPage_mistralAI_webView21_browserDisplay).EndInit();
             main_tabControl.ResumeLayout(false);
             main_tabControl_tabPage_blackBoxAI.ResumeLayout(false);
