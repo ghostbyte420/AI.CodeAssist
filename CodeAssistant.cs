@@ -26,13 +26,16 @@ namespace AI.CodeAssist
         {
             scintilla = new Scintilla
             {
+                Dock = DockStyle.Fill,
                 Location = codeAssistant_richTextBox_exportCodeBase_preview.Location,
                 Size = codeAssistant_richTextBox_exportCodeBase_preview.Size,
-                Dock = codeAssistant_richTextBox_exportCodeBase_preview.Dock,
                 Anchor = codeAssistant_richTextBox_exportCodeBase_preview.Anchor
             };
+
+            // Configure Scintilla for C# syntax highlighting
             scintilla.LexerName = "cpp";
             scintilla.StyleResetDefault();
+            scintilla.Styles[Style.Cpp.Default].ForeColor = Color.Black;
             scintilla.Styles[Style.Cpp.Comment].ForeColor = Color.Green;
             scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Color.Green;
             scintilla.Styles[Style.Cpp.CommentDoc].ForeColor = Color.Green;
@@ -42,10 +45,14 @@ namespace AI.CodeAssist
             scintilla.Styles[Style.Cpp.Word].ForeColor = Color.Blue;
             scintilla.Styles[Style.Cpp.Word2].ForeColor = Color.Blue;
             scintilla.Styles[Style.Cpp.Operator].ForeColor = Color.Brown;
+
+            // Add C# keywords
             scintilla.SetKeywords(0, "abstract as base bool break byte case catch char checked class const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed short sizeof stackalloc static string struct switch this throw true try typeof uint ulong unchecked unsafe ushort using virtual void volatile while");
             scintilla.SetKeywords(1, "add alias ascending descending dynamic from get global group into join let orderby partial remove select set value var where yield");
-            this.Controls.Remove(codeAssistant_richTextBox_exportCodeBase_preview);
-            this.Controls.Add(scintilla);
+
+            // Remove the RichTextBox and add Scintilla to panel1
+            panel1.Controls.Remove(codeAssistant_richTextBox_exportCodeBase_preview);
+            panel1.Controls.Add(scintilla);
         }
 
         private void codeAssistant_button_projectPathSearch_Click(object sender, EventArgs e)
@@ -126,65 +133,19 @@ namespace AI.CodeAssist
                     codeAssistant_progressBar_exportCodeBase.Value = i + 1;
                     Application.DoEvents();
 
-                    if (currentCharCount + 2 > maxCharsPerFile)
-                    {
-                        outfile.Close();
-                        currentFileIndex++;
-                        currentOutputFile = Path.Combine(outputDirectory, $"{outputFileBase}{currentFileIndex}.txt");
-                        outfile = new StreamWriter(currentOutputFile);
-                        currentCharCount = 0;
-                    }
-                    outfile.WriteLine();
+                    // Add file marker and content to preview
                     previewContent.AppendLine();
-                    currentCharCount += 2;
-                    totalChars += 2;
-
-                    string fileMarker = $"=== File: {file} ===";
-                    int fileMarkerLength = fileMarker.Length + 2;
-                    if (currentCharCount + fileMarkerLength > maxCharsPerFile)
-                    {
-                        outfile.Close();
-                        currentFileIndex++;
-                        currentOutputFile = Path.Combine(outputDirectory, $"{outputFileBase}{currentFileIndex}.txt");
-                        outfile = new StreamWriter(currentOutputFile);
-                        currentCharCount = 0;
-                    }
-                    outfile.WriteLine(fileMarker);
-                    previewContent.AppendLine(fileMarker);
-                    currentCharCount += fileMarkerLength;
-                    totalChars += fileMarkerLength;
-
-                    if (currentCharCount + 2 > maxCharsPerFile)
-                    {
-                        outfile.Close();
-                        currentFileIndex++;
-                        currentOutputFile = Path.Combine(outputDirectory, $"{outputFileBase}{currentFileIndex}.txt");
-                        outfile = new StreamWriter(currentOutputFile);
-                        currentCharCount = 0;
-                    }
-                    outfile.WriteLine();
+                    previewContent.AppendLine($"=== File: {file} ===");
                     previewContent.AppendLine();
-                    currentCharCount += 2;
-                    totalChars += 2;
 
                     foreach (string line in lines)
                     {
-                        int lineLength = line.Length + 2;
-                        if (currentCharCount + lineLength > maxCharsPerFile)
-                        {
-                            outfile.Close();
-                            currentFileIndex++;
-                            currentOutputFile = Path.Combine(outputDirectory, $"{outputFileBase}{currentFileIndex}.txt");
-                            outfile = new StreamWriter(currentOutputFile);
-                            currentCharCount = 0;
-                        }
-                        outfile.WriteLine(line);
                         previewContent.AppendLine(line);
-                        currentCharCount += lineLength;
-                        totalChars += lineLength;
                     }
+                    previewContent.AppendLine();
 
-                    if (currentCharCount + 2 > maxCharsPerFile)
+                    // Write to output file
+                    if (currentCharCount + fileContent.Length + 100 > maxCharsPerFile)
                     {
                         outfile.Close();
                         currentFileIndex++;
@@ -192,14 +153,18 @@ namespace AI.CodeAssist
                         outfile = new StreamWriter(currentOutputFile);
                         currentCharCount = 0;
                     }
+                    outfile.WriteLine($"=== File: {file} ===");
                     outfile.WriteLine();
-                    previewContent.AppendLine();
-                    currentCharCount += 2;
-                    totalChars += 2;
+                    outfile.WriteLine(fileContent);
+                    outfile.WriteLine();
+                    currentCharCount += fileContent.Length + 100;
+                    totalChars += fileContent.Length + 100;
                 }
 
                 outfile.Close();
                 MessageBox.Show($"Combined code has been written to {currentFileIndex} files in the Output folder. Total characters: {totalChars}");
+
+                // Update the Scintilla control with the preview content
                 scintilla.Text = previewContent.ToString();
             }
             catch (Exception ex)
