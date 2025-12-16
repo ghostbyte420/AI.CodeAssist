@@ -5,6 +5,7 @@ using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace AI.CodeAssist
 {
@@ -17,7 +18,7 @@ namespace AI.CodeAssist
             InitializeComponent();
 
             /// Main Form Settings
-            this.MinimumSize = new Size(1000, 600); // Set minimum width and height
+            this.MinimumSize = new Size(1000, 600);
 
             /// Tab Control Setup
             main_tabControl.DrawMode = TabDrawMode.OwnerDrawFixed;
@@ -33,6 +34,7 @@ namespace AI.CodeAssist
             Directory.CreateDirectory(Path.GetDirectoryName(mistralCookiesFilePath));
             Directory.CreateDirectory(Path.GetDirectoryName(deepAICookiesFilePath));
             Directory.CreateDirectory(Path.GetDirectoryName(blackBoxCookiesFilePath));
+            Directory.CreateDirectory(Path.GetDirectoryName(copilotCookiesFilePath));
         }
 
         private async void Main_Load(object sender, EventArgs e)
@@ -70,6 +72,18 @@ namespace AI.CodeAssist
                 if (args.IsSuccess && main_tabControl_tabPage_blackBoxAI_webView21_browserDisplay.Source.AbsoluteUri.Contains("blackbox.ai"))
                 {
                     await SaveBlackBoxCookies();
+                }
+            };
+
+            /// GitHub Copilot WebView2 Initialization
+            await main_tabControl_tabPage_copilot_webView21_browserDisplay.EnsureCoreWebView2Async();
+            LoadCopilotCookies();
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.Source = new Uri("https://github.com/login");
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.NavigationCompleted += async (s, args) =>
+            {
+                if (args.IsSuccess && main_tabControl_tabPage_copilot_webView21_browserDisplay.Source.AbsoluteUri.Contains("github.com"))
+                {
+                    await SaveCopilotCookies();
                 }
             };
         }
@@ -240,6 +254,62 @@ namespace AI.CodeAssist
             }
         }
 
+        /// GitHub Copilot Cookie Management
+        private string copilotCookiesFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GitHubCopilot", "copilot_cookies.dat");
+     
+        private void LoadCopilotCookies()
+        {
+            try
+            {
+                if (File.Exists(copilotCookiesFilePath))
+                {
+                    var cookies = File.ReadAllText(copilotCookiesFilePath);
+                    if (!string.IsNullOrEmpty(cookies))
+                    {
+                        var cookieManager = main_tabControl_tabPage_copilot_webView21_browserDisplay.CoreWebView2.CookieManager;
+                        foreach (var cookie in cookies.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var parts = cookie.Split('|');
+                            if (parts.Length == 7)
+                            {
+                                bool isSecure = parts[3] == "TRUE";
+                                bool isHttpOnly = parts[4] == "TRUE";
+                                DateTime.TryParse(parts[5], out var expires);
+                                var coreCookie = cookieManager.CreateCookie(parts[0], parts[1], parts[2], parts[6]);
+                                coreCookie.IsSecure = isSecure;
+                                coreCookie.IsHttpOnly = isHttpOnly;
+                                coreCookie.Expires = expires;
+                                cookieManager.AddOrUpdateCookie(coreCookie);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load GitHub Copilot cookies: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private async Task SaveCopilotCookies()
+        {
+            try
+            {
+                var cookieManager = main_tabControl_tabPage_copilot_webView21_browserDisplay.CoreWebView2.CookieManager;
+                var cookies = await cookieManager.GetCookiesAsync("https://github.com");
+                var cookieList = new List<string>();
+                foreach (var cookie in cookies)
+                {
+                    cookieList.Add($"{cookie.Name}|{cookie.Value}|{cookie.Domain}|{cookie.IsSecure}|{cookie.IsHttpOnly}|{cookie.Expires}|{cookie.Path}");
+                }
+                File.WriteAllText(copilotCookiesFilePath, string.Join("\n", cookieList));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save GitHub Copilot cookies: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
         /// Clear Cookies Button Click Event
         private async void main_statusStrip_button_clearCookies_ButtonClick(object sender, EventArgs e)
         {
@@ -287,6 +357,21 @@ namespace AI.CodeAssist
                     if (File.Exists(blackBoxCookiesFilePath))
                     {
                         File.Delete(blackBoxCookiesFilePath);
+                    }
+                }
+
+                // Clear GitHub Copilot cookies
+                var copilotCookieManager = main_tabControl_tabPage_copilot_webView21_browserDisplay.CoreWebView2.CookieManager;
+                if (copilotCookieManager != null)
+                {
+                    var copilotCookies = await copilotCookieManager.GetCookiesAsync("https://github.com");
+                    foreach (var cookie in copilotCookies)
+                    {
+                        copilotCookieManager.DeleteCookie(cookie);
+                    }
+                    if (File.Exists(copilotCookiesFilePath))
+                    {
+                        File.Delete(copilotCookiesFilePath);
                     }
                 }
 
@@ -347,7 +432,7 @@ namespace AI.CodeAssist
             this.Resize += (sender, e) =>
             {
                 main_menuStrip_button_codeAssistant.Margin = new Padding(
-                    this.ClientSize.Width - main_menuStrip_button_codeAssistant.Width - 100, // 100px from the right
+                    this.ClientSize.Width - main_menuStrip_button_codeAssistant.Width - 100,
                     0,
                     0,
                     0

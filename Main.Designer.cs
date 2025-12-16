@@ -36,6 +36,7 @@
             main_tabControl_tabPage_deepAI = new TabPage();
             main_tabControl_tabPage_deepAI_webView21_browserDisplay = new Microsoft.Web.WebView2.WinForms.WebView2();
             main_tabControl_tabPage_mistralAI = new TabPage();
+            main_tabControl_tabPage_copilot = new TabPage();
             main_statusStrip = new StatusStrip();
             main_statusStrip_spring = new ToolStripStatusLabel();
             main_statusStrip_button_clearCookies = new ToolStripSplitButton();
@@ -43,6 +44,7 @@
             main_panel = new Panel();
             main_menuStrip = new MenuStrip();
             main_menuStrip_button_codeAssistant = new ToolStripMenuItem();
+            main_tabControl_tabPage_copilot_webView21_browserDisplay = new Microsoft.Web.WebView2.WinForms.WebView2();
             ((System.ComponentModel.ISupportInitialize)main_tabControl_tabPage_mistralAI_webView21_browserDisplay).BeginInit();
             main_tabControl.SuspendLayout();
             main_tabControl_tabPage_blackBoxAI.SuspendLayout();
@@ -50,9 +52,11 @@
             main_tabControl_tabPage_deepAI.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)main_tabControl_tabPage_deepAI_webView21_browserDisplay).BeginInit();
             main_tabControl_tabPage_mistralAI.SuspendLayout();
+            main_tabControl_tabPage_copilot.SuspendLayout();
             main_statusStrip.SuspendLayout();
             main_panel.SuspendLayout();
             main_menuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)main_tabControl_tabPage_copilot_webView21_browserDisplay).BeginInit();
             SuspendLayout();
             // 
             // main_tabControl_tabPage_mistralAI_webView21_browserDisplay
@@ -72,6 +76,7 @@
             main_tabControl.Controls.Add(main_tabControl_tabPage_blackBoxAI);
             main_tabControl.Controls.Add(main_tabControl_tabPage_deepAI);
             main_tabControl.Controls.Add(main_tabControl_tabPage_mistralAI);
+            main_tabControl.Controls.Add(main_tabControl_tabPage_copilot);
             main_tabControl.Dock = DockStyle.Fill;
             main_tabControl.Font = new Font("Segoe UI", 9.5F);
             main_tabControl.Location = new Point(0, 0);
@@ -138,6 +143,17 @@
             main_tabControl_tabPage_mistralAI.Text = "Mistral.AI";
             main_tabControl_tabPage_mistralAI.UseVisualStyleBackColor = true;
             // 
+            // main_tabControl_tabPage_copilot
+            // 
+            main_tabControl_tabPage_copilot.Controls.Add(main_tabControl_tabPage_copilot_webView21_browserDisplay);
+            main_tabControl_tabPage_copilot.Location = new Point(4, 26);
+            main_tabControl_tabPage_copilot.Name = "main_tabControl_tabPage_copilot";
+            main_tabControl_tabPage_copilot.Padding = new Padding(3);
+            main_tabControl_tabPage_copilot.Size = new Size(1077, 463);
+            main_tabControl_tabPage_copilot.TabIndex = 3;
+            main_tabControl_tabPage_copilot.Text = "Copilot";
+            main_tabControl_tabPage_copilot.UseVisualStyleBackColor = true;
+            // 
             // main_statusStrip
             // 
             main_statusStrip.Font = new Font("Segoe UI", 10F);
@@ -201,6 +217,18 @@
             main_menuStrip_button_codeAssistant.Text = "Code Assistant";
             main_menuStrip_button_codeAssistant.Click += main_menuStrip_button_codeAssistant_Click;
             // 
+            // main_tabControl_tabPage_copilot_webView21_browserDisplay
+            // 
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.AllowExternalDrop = true;
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.CreationProperties = null;
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.DefaultBackgroundColor = Color.White;
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.Dock = DockStyle.Fill;
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.Location = new Point(3, 3);
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.Name = "main_tabControl_tabPage_copilot_webView21_browserDisplay";
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.Size = new Size(1071, 457);
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.TabIndex = 0;
+            main_tabControl_tabPage_copilot_webView21_browserDisplay.ZoomFactor = 1D;
+            // 
             // aiCodeAssistMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -223,11 +251,13 @@
             main_tabControl_tabPage_deepAI.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)main_tabControl_tabPage_deepAI_webView21_browserDisplay).EndInit();
             main_tabControl_tabPage_mistralAI.ResumeLayout(false);
+            main_tabControl_tabPage_copilot.ResumeLayout(false);
             main_statusStrip.ResumeLayout(false);
             main_statusStrip.PerformLayout();
             main_panel.ResumeLayout(false);
             main_menuStrip.ResumeLayout(false);
             main_menuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)main_tabControl_tabPage_copilot_webView21_browserDisplay).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -248,5 +278,7 @@
         private ToolStripStatusLabel main_statusStrip_spring;
         private ToolStripStatusLabel main_statusStrip_stopper;
         private ToolStripMenuItem main_menuStrip_button_codeAssistant;
+        private TabPage main_tabControl_tabPage_copilot;
+        private Microsoft.Web.WebView2.WinForms.WebView2 main_tabControl_tabPage_copilot_webView21_browserDisplay;
     }
 }
